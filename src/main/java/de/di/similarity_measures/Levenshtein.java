@@ -116,6 +116,7 @@ public class Levenshtein implements SimilarityMeasure {
         // algorithm. Depending on whether the inner flag withDamerau is set, the Damerau extension rule should be    //
         // used during calculation or not. Hint: Implement the Levenshtein algorithm above first, then copy the code  //
         // to this function and adjust it a bit to work on the arrays - the algorithm is the same.                    //
+
         if (withDamerau){   // calculation with Damerau-Levenshtein distance
             for (int i = 1; i <= strings1.length; i++) {        // iterate down through letters of first string array
                 lowerLine[0] = i;                               // set first digit of lowerLine to pass #
