@@ -20,7 +20,7 @@ public class INDProfiler {
         //                                      DATA INTEGRATION ASSIGNMENT                                           //
         // Discover all inclusion dependencies and return them in inclusion dependencies list. The boolean flag       //
         // discoverNary indicates, whether only unary or both unary and n-ary INDs should be discovered. To solve     //
-        // this assignment, only unary INDs need to be discovered. Discovering also n-ary INDs is optional.           //
+        // this assignment, only unary INDs need to be discovered. Discovering also n-ary INDs is not optional.           //
 
 
 

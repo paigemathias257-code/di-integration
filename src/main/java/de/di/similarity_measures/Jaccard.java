@@ -52,7 +52,33 @@ public class Jaccard implements SimilarityMeasure {
         // calculated differently depending on the token semantics: set semantics remove duplicates while bag         //
         // semantics consider them during the calculation. The solution should be able to calculate the Jaccard       //
         // similarity either of the two semantics by respecting the inner bagSemantics flag.                          //
+        ArrayList<String> intersect = new ArrayList<String>();
+        int tokenLength = 0;
+        /*for (int a = 0; a < strings1[0].length(); a++){
+           tokenLength++;
+        }*/
+        int union = (strings1.length*this.tokenizer.getTokenSize()) + (strings2.length*this.tokenizer.getTokenSize());
+        if (bagSemantics) {
+            for (int i = 0; i < strings1.length; i++) {
+                for (int j = 0; j < strings2.length; j++) {
+                    if (strings1[i].equals(strings2[j])) {
+                        intersect.add(strings1[i]);
+                    }
+                }
+            }
+            jaccardSimilarity = (double) intersect.size()/union;
 
+        } else {
+            Set<String> temp1 = new HashSet<String>(Arrays.asList(strings1));
+            Set<String> temp2 = new HashSet<String>(Arrays.asList(strings2));
+            temp1.retainAll(temp2);
+
+            String[] result = temp1.toArray(new String[temp1.size()]);
+
+
+            jaccardSimilarity = (double) result.length/union;
+
+        }
 
 
         //                                                                                                            //
