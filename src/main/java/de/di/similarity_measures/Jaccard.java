@@ -52,35 +52,50 @@ public class Jaccard implements SimilarityMeasure {
         // calculated differently depending on the token semantics: set semantics remove duplicates while bag         //
         // semantics consider them during the calculation. The solution should be able to calculate the Jaccard       //
         // similarity either of the two semantics by respecting the inner bagSemantics flag.                          //
-        ArrayList<String> intersect = new ArrayList<String>();
-        int tokenLength = 0;
-        /*for (int a = 0; a < strings1[0].length(); a++){
-           tokenLength++;
-        }*/
-        int union = (strings1.length*this.tokenizer.getTokenSize()) + (strings2.length*this.tokenizer.getTokenSize());
+
+
         if (bagSemantics) {
-            for (int i = 0; i < strings1.length; i++) {
-                for (int j = 0; j < strings2.length; j++) {
-                    if (strings1[i].equals(strings2[j])) {
-                        intersect.add(strings1[i]);
-                    }
+            ArrayList<String> intersect = new ArrayList<String>(); // initialize intersect
+
+            // build a frequency map for the first string array
+            Map<String, Integer> counts = new HashMap<>();
+            for (String str : strings1) {   // increments through first string
+                // only adds a string if not null
+                if (str != null) {
+                    // adds string to map and increments its frequency (or add one to zero if not already present)
+                    counts.put(str, counts.getOrDefault(str, 0) + 1);
                 }
             }
+
+            // track matching strings inside a dynamic list
+            for (String str : strings2) {
+                // finds if string is in map and has a frequency higher than 0
+                if (str != null && counts.containsKey(str) && counts.get(str) > 0) {
+                    intersect.add(str);
+                    // decrement the frequency count in the map so that if there are more instances of a token in one,
+                    // it is not counted too many times
+                    counts.put(str, counts.get(str) - 1);
+                }
+            }
+
+            int union = strings1.length + strings2.length;  // calculate union
             jaccardSimilarity = (double) intersect.size()/union;
 
         } else {
-            Set<String> temp1 = new HashSet<String>(Arrays.asList(strings1));
-            Set<String> temp2 = new HashSet<String>(Arrays.asList(strings2));
-            temp1.retainAll(temp2);
+            // convert to HashSet to remove duplicates
+            Set<String> stringSet1 = new HashSet<String>(Arrays.asList(strings1));
+            Set<String> stringSet2 = new HashSet<String>(Arrays.asList(strings2));
+            // HashSet to contain the intersection
+            Set<String> intersectSet = new HashSet<String>(stringSet1);
+            intersectSet.retainAll(stringSet2); // retains only the tokens in both
 
-            String[] result = temp1.toArray(new String[temp1.size()]);
+            // convert set to String array to have the intersection
+            String[] intersect = intersectSet.toArray(new String[intersectSet.size()]);
 
-
-            jaccardSimilarity = (double) result.length/union;
-
+            // calculate the union
+            int union = stringSet1.size() + stringSet2.size()- intersectSet.size();
+            jaccardSimilarity = (double) intersect.length/union;
         }
-
-
         //                                                                                                            //
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
