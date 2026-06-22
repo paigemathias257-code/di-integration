@@ -48,37 +48,40 @@ public class Levenshtein implements SimilarityMeasure {
 
         }else {
             if (withDamerau) {
-                for (int i = 1; i <= string2.length(); i++) {
-                    lowerLine[0] = i;
-                    for (int j = 1; j <= string1.length(); j++) {
+                for (int i = 1; i <= string2.length(); i++) {       // iterate down through letters of first string array
+                    lowerLine[0] = i;                               // set first digit of lowerLine to pass #
+                    for (int j = 1; j <= string1.length(); j++) {   // iterate over through letters of second string
+                        // choose diagonal value when letters match
                         if (string1.charAt(j - 1) == (string2.charAt(i - 1))) {
                             lowerLine[j] = upperLine[j - 1];
-                        } else {
+                        } else { // choose action when letters do not match
                             // avoid using upperupperLine when not applicable
                             if (j >= 2 && i >= 2 && (string1.charAt(j - 1) == (string2.charAt(i - 2)) && (string1.charAt(j - 2) == (string2.charAt(i - 1))))) {
                                 lowerLine[j] = 1 + Math.min(Math.min(upperLine[j], upperLine[j - 1]), Math.min(lowerLine[j - 1], upperupperLine[j - 2]));
                             } else {
+                                // add the min value of top, diagonal, and left values
                                 lowerLine[j] = 1 + Math.min(Math.min(upperLine[j], upperLine[j - 1]), lowerLine[j - 1]);
                             }
 
                         }
                     }
-                    upperupperLine = Arrays.copyOf(upperLine, upperLine.length);
-                    upperLine = Arrays.copyOf(lowerLine, lowerLine.length);
+                    upperupperLine = Arrays.copyOf(upperLine, upperLine.length);    // move upperLine to upperupperLine
+                    upperLine = Arrays.copyOf(lowerLine, lowerLine.length);         // move lowerLine to upperLine
                 }
                 levenshteinSimilarity = 1 - (double) lowerLine[lowerLine.length - 1] / Math.max(string1.length(), string2.length());
-            } else {
-                for (int i = 1; i <= string2.length(); i++) {
-                    lowerLine[0] = i;
-                    for (int j = 1; j <= string1.length(); j++) {
+            } else {    // calculation without Damerau-Levenshtein distance
+                for (int i = 1; i <= string2.length(); i++) {       // iterate down through letters of first string array
+                    lowerLine[0] = i;                               // set first digit of lowerLine to pass #
+                    for (int j = 1; j <= string1.length(); j++) {   // iterate over through letters of second string
+                        // choose diagonal value when letters match
                         if (string1.charAt(j - 1) == (string2.charAt(i - 1))) {
                             lowerLine[j] = upperLine[j - 1];
-                        } else {
+                        } else { // choose action when letters do not match
                             int temp = Math.min(Math.min(upperLine[j], upperLine[j - 1]), lowerLine[j - 1]);
                             lowerLine[j] = temp + 1;
                         }
                     }
-                    upperLine = Arrays.copyOf(lowerLine, lowerLine.length);
+                    upperLine = Arrays.copyOf(lowerLine, lowerLine.length); // move lowerLine to upperLine
                 }
                 levenshteinSimilarity = 1 - (double) lowerLine[lowerLine.length - 1] / Math.max(string1.length(), string2.length());
             }
@@ -120,7 +123,7 @@ public class Levenshtein implements SimilarityMeasure {
         if (withDamerau){   // calculation with Damerau-Levenshtein distance
             for (int i = 1; i <= strings1.length; i++) {        // iterate down through letters of first string array
                 lowerLine[0] = i;                               // set first digit of lowerLine to pass #
-                for (int j = 1; j <= strings2.length; j++) {    // iterate over through letter of second string
+                for (int j = 1; j <= strings2.length; j++) {    // iterate over through letters of second string
                     // choose diagonal value when letters match
                     if (strings1[i - 1].equals(strings2[j - 1])) {
                         lowerLine[j] = upperLine[j - 1];

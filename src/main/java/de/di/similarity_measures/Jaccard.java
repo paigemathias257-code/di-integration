@@ -55,7 +55,7 @@ public class Jaccard implements SimilarityMeasure {
 
 
         if (bagSemantics) {
-            ArrayList<String> intersect = new ArrayList<String>(); // initialize intersect
+            ArrayList<String> intersect = new ArrayList<>(); // initialize intersect
 
             // build a frequency map for the first string array
             Map<String, Integer> counts = new HashMap<>();
@@ -71,7 +71,7 @@ public class Jaccard implements SimilarityMeasure {
             for (String str : strings2) {
                 // finds if string is in map and has a frequency higher than 0
                 if (str != null && counts.containsKey(str) && counts.get(str) > 0) {
-                    intersect.add(str);
+                    intersect.add(str); // adds to intersect if in strings1 and frequency is greater than 0
                     // decrement the frequency count in the map so that if there are more instances of a token in one,
                     // it is not counted too many times
                     counts.put(str, counts.get(str) - 1);
@@ -83,18 +83,15 @@ public class Jaccard implements SimilarityMeasure {
 
         } else {
             // convert to HashSet to remove duplicates
-            Set<String> stringSet1 = new HashSet<String>(Arrays.asList(strings1));
-            Set<String> stringSet2 = new HashSet<String>(Arrays.asList(strings2));
+            Set<String> stringSet1 = new HashSet<>(Arrays.asList(strings1));
+            Set<String> stringSet2 = new HashSet<>(Arrays.asList(strings2));
             // HashSet to contain the intersection
-            Set<String> intersectSet = new HashSet<String>(stringSet1);
+            Set<String> intersectSet = new HashSet<>(stringSet1);
             intersectSet.retainAll(stringSet2); // retains only the tokens in both
-
-            // convert set to String array to have the intersection
-            String[] intersect = intersectSet.toArray(new String[intersectSet.size()]);
 
             // calculate the union
             int union = stringSet1.size() + stringSet2.size()- intersectSet.size();
-            jaccardSimilarity = (double) intersect.length/union;
+            jaccardSimilarity = (double) intersectSet.size()/union;
         }
         //                                                                                                            //
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

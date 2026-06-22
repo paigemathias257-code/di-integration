@@ -1,7 +1,5 @@
 package de.di.data_profiling.structures;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import lombok.Getter;
 
@@ -69,35 +67,36 @@ public class PositionListIndex {
         // invertedClusters. The clustersIntersection is a new list that stores the intersection result. Note that    //
         // the clusters are "Stripped Partitions", which means that only clusters of size >1 are part of the result.  //
 
-        String[] combo = new String[invertedClusters.length];
+        // create strings to consolidate clusters
+        String[] combos = new String[invertedClusters.length];
+        // iterate through row of inverted cluster
         for (int row = 0; row<invertedClusters.length;row++){
-            for (int oci = 0; oci<clusters.size();oci++) { // outer cluster index
-                for (int ici = 0; ici < clusters.get(oci).size(); ici++) { // inner cluster index
-                    if (clusters.get(oci).get(ici).equals(row)){ //gets the probe value for a row
-                        combo[row] = "("+clusters.indexOf(clusters.get(oci))+","+invertedClusters[row]+")"; // combines the values of row into a tuple
-                    }
-                }
-            }
-        }
-        // creates a set of the possible combinations to be compares
-        Set<String> possibilities = new LinkedHashSet<>(Arrays.asList(combo));
-        String[] compare = possibilities.toArray(new String[0]);
-        for (int i = 0; i<possibilities.size();i++) {
-            IntArrayList temp = new IntArrayList();
-            for (int j = 0; j < combo.length; j++) {
-                if (compare[i] == null) {
-                    break;
+            // iterate through the attribute clusters
+            for (int oci = 0; oci<clusters.size();oci++) {                  // outer cluster index
+                // iterate through the indices inside the cluster
+                for (int ici = 0; ici < clusters.get(oci).size(); ici++) {  // inner cluster index
+                    // compare the attribute of the cluster at the index with the attribute value at the index in the inverted cluster
+                    if (clusters.get(oci).get(ici).equals(row) && invertedClusters[row] != -1){
+                        // combines the values of row into a string
+                        combos[row] = "("+clusters.indexOf(clusters.get(oci))+","+invertedClusters[row]+")";
+                    }}}}
 
-                } else if (combo[j] != null){
-                    if (compare[i].equals(combo[j])) {
+        // creates a set of the possible combinations to be compared; set removes duplicates
+        Set<String> possibilitiesSet = new LinkedHashSet<>(Arrays.asList(combos)); // linked hash set to maintain proper order
+        String[] possibilities = possibilitiesSet.toArray(new String[0]);    // convert to string array to use indices
+
+        for (String possibility: possibilities) {   // iterate though possible combos
+            IntArrayList temp = new IntArrayList(); // temp list to hold current intersection cluster
+            for (int j = 0; j < combos.length;j++){ // iterate through stored list of combos
+                if (possibility == null) {          // break if no possibility
+                    break;
+                } else if (combos[j] != null){      // if combos[j] is null, just keep iterating to next j
+                    if (possibility.equals(combos[j])) {
                         temp.add(j);
-                    }
-                }
-            }
-            if (temp.size() > 1) {
+                    }}}
+            if (temp.size() > 1) { // only add if the cluster is frequent
                 clustersIntersection.add(temp);
-            }
-        }
+            }}
 
         //                                                                                                            //
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
